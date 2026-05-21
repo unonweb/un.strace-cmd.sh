@@ -40,8 +40,13 @@ function process_log_file {
 	header+="--------------\n"
 	
 	# EXCLUDE & WRITE FINAL_LOG
-    if [[ -n "${FILTER_EXCLUDE}" ]]; then
-        grep -iv "${FILTER_EXCLUDE}" "${RAW_LOG}" | grep --perl-regexp "${line_pattern}" > "${FINAL_LOG}"
+    if [[ -n "${FILTER_EXCLUDE}" || "${FILTER_SYSCALL_SET}" == "write" ]]; then
+		
+		local exclude_grep_opts=(--ignore-case --invert-match)
+		[[ -n "${FILTER_EXCLUDE}" ]] && exclude_grep_opts+=("-e" "${FILTER_EXCLUDE}")
+		[[ "${FILTER_SYSCALL_SET}" == "write" ]] && exclude_grep_opts+=("-e" "O_RDONLY")
+        echo "Calling grep with ${exclude_grep_opts[@]}"
+		grep ${exclude_grep_opts[@]} "${RAW_LOG}" | grep --perl-regexp "${line_pattern}" > "${FINAL_LOG}"
     else
         grep --perl-regexp "${line_pattern}" "${RAW_LOG}" > "${FINAL_LOG}"
     fi
