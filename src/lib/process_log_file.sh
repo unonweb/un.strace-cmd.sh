@@ -35,7 +35,7 @@ function process_log_file {
 	local header=""
 	header+="CMD: ${CMD}\n"
 	header+="STATUS: ${FILTER_STATUS}\n"
-	header+="INCLUDED: "${INCLUDE_PATTERN}"\n"
+	header+="INCLUDED: "${FILTER_INCLUDE}"\n"
 	[[ -n "${FILTER_EXCLUDE}" ]] && header+="EXCLUDED:  \"${FILTER_EXCLUDE}\"\n"
 	header+="--------------\n"
 	
