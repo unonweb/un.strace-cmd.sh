@@ -22,10 +22,10 @@ BLINKINK="\033[5m"
 OUT_DIR="/tmp/strace-logs"
 CMD=""
 FILTER_SYSCALL_SET=""
-FILTER_INCLUDE="home" # Options: home, system, none
-FILTER_STATUS="all" # Options: all, success, failed
-FILTER_EXCLUDE=""      # Default: no exclusions
-ONLY_MATCHING="false"  # Default: false (search for paths directly)
+FILTER_INCLUDE="" 		# Options: home, system, <any-string>
+FILTER_STATUS="all" 	# Options: all, success, failed
+FILTER_EXCLUDE=""      	# Default: no exclusions
+ONLY_MATCHING="false"  	# Default: false (search for paths directly)
 
 # STATIC
 SYSCALLS_READ="open,openat,stat,access"
@@ -60,13 +60,19 @@ if [[ -z "${FILTER_SYSCALL_SET}" ]]; then
     print_help_exit
 fi
 
-# Ensure output directory exists
+# LOG FILES
 mkdir -p "${OUT_DIR}"
-
-# Isolate the clean command name if a full path was provided
+case "${FILTER_INCLUDE}" in 
+	"home")
+		LOG_FILTER_SUFFIX="-home" ;;
+	"system")
+		LOG_FILTER_SUFFIX="-system" ;;
+	*)
+		LOG_FILTER_SUFFIX=""
+esac
 RAW_LOG="${OUT_DIR}/${NAME}-${FILTER_SYSCALL_SET}.raw.log"
-FINAL_LOG="${OUT_DIR}/${NAME}-${FILTER_STATUS}-${FILTER_SYSCALL_SET}-${FILTER_INCLUDE}.log"
-SORTED_LOG="${OUT_DIR}/${NAME}-${FILTER_STATUS}-${FILTER_SYSCALL_SET}-${FILTER_INCLUDE}.sorted.log"
+FINAL_LOG="${OUT_DIR}/${NAME}-${FILTER_STATUS}-${FILTER_SYSCALL_SET}${LOG_FILTER_SUFFIX}.log"
+SORTED_LOG="${OUT_DIR}/${NAME}-${FILTER_STATUS}-${FILTER_SYSCALL_SET}${LOG_FILTER_SUFFIX}.sorted.log"
 
 STRACE_ARGS=()
 if [[ "${FILTER_STATUS}" == "success" ]]; then
