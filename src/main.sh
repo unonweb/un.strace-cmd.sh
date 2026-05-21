@@ -23,7 +23,7 @@ OUT_DIR="/tmp/strace-logs"
 CMD=""
 FILTER_SYSCALL_SET=""
 FILTER_INCLUDE="" 		# Options: home, system, <any-string>
-FILTER_STATUS="all" 	# Options: all, success, failed
+FILTER_STATUS="" 	# Options: all, success, failed
 FILTER_EXCLUDE=""      	# Default: no exclusions
 ONLY_MATCHING="false"  	# Default: false (search for paths directly)
 
