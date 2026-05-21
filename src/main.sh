@@ -60,19 +60,36 @@ if [[ -z "${FILTER_SYSCALL_SET}" ]]; then
     print_help_exit
 fi
 
-# LOG FILES
+# LOG FILE PATHS
 mkdir -p "${OUT_DIR}"
-case "${FILTER_INCLUDE}" in 
+
+RAW_LOG="${OUT_DIR}/${NAME}"
+FINAL_LOG="${OUT_DIR}/${NAME}"
+SORTED_LOG="${OUT_DIR}/${NAME}"
+
+if [[ -n ${FILTER_STATUS} ]]; then
+	RAW_LOG+="-${FILTER_STATUS}"
+	FINAL_LOG+="-${FILTER_STATUS}"
+	SORTED_LOG+="-${FILTER_STATUS}"
+fi
+
+RAW_LOG+="-${FILTER_SYSCALL_SET}"
+FINAL_LOG+="-${FILTER_SYSCALL_SET}"
+SORTED_LOG+="-${FILTER_SYSCALL_SET}"
+
+case "${FILTER_INCLUDE}" in
 	"home")
-		LOG_FILTER_SUFFIX="-home" ;;
+		FINAL_LOG+="-home"
+		SORTED_LOG+="-home"
+		;;
 	"system")
-		LOG_FILTER_SUFFIX="-system" ;;
-	*)
-		LOG_FILTER_SUFFIX=""
+		FINAL_LOG+="-system"
+		SORTED_LOG+="-system"
 esac
-RAW_LOG="${OUT_DIR}/${NAME}-${FILTER_SYSCALL_SET}.raw.log"
-FINAL_LOG="${OUT_DIR}/${NAME}-${FILTER_STATUS}-${FILTER_SYSCALL_SET}${LOG_FILTER_SUFFIX}.log"
-SORTED_LOG="${OUT_DIR}/${NAME}-${FILTER_STATUS}-${FILTER_SYSCALL_SET}${LOG_FILTER_SUFFIX}.sorted.log"
+
+RAW_LOG+=".raw.log"
+FINAL_LOG+=".log"
+SORTED_LOG+=".sorted.log"
 
 STRACE_ARGS=()
 if [[ "${FILTER_STATUS}" == "success" ]]; then
